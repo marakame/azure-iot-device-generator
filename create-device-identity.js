@@ -6,16 +6,37 @@ var connectionString = 'HostName={AppHostName};SharedAccessKeyName={YourSharedAc
 
 var registry = iothub.Registry.fromConnectionString(connectionString);
 
-function createDevice(deviceID){
+function createDevice(callback){
     var device = new iothub.Device(null);
-    device.deviceId = deviceID;
+    var deviceData = {};
+
+    device.deviceId = createID();
     registry.create(device, function(err, deviceInfo, res) {
       if (err) {
         registry.get(device.deviceId, printDeviceInfo);
+        callback(err, deviceInfo);
       }
       if (deviceInfo) {
         printDeviceInfo(err, deviceInfo, res)
+        deviceData.id = deviceInfo.deviceId;
+        deviceData.key = deviceInfo.authentication.symmetricKey.primaryKey;
       }
+
+      callback(err, deviceData);
+
+    });
+}
+
+function deleteDevice(deviceID, callback){
+    console.log("Deleting device " + deviceID + "...");
+
+    registry.delete(deviceID, function(err, data) {
+        if (err) {
+            registry.get(device.deviceId, printDeviceInfo);
+            callback(err, data);
+        } else {
+            callback(err, 'OK');
+        }
     });
 }
 
@@ -30,11 +51,12 @@ function createID(){
     console.log("Creating ID for device...");
 
     var deviceID = uuidV4();
-    console.log(deviceID);
+    console.log("ID " + deviceID + " created.");
 
     return deviceID;
 }
 
 module.exports = {
-    createID: createID
+    createDevice: createDevice,
+    deleteDevice: deleteDevice
 }
