@@ -3,6 +3,7 @@ var express = require('express'),
 	path = require('path');
 var jquery = require('jquery');
 var deviceCreator = require('./create-device-identity');
+var deviceSimulator = require('./device-simulator');
 
 //create our express app
 var app = express();
@@ -42,6 +43,36 @@ app.post('/api/delete-device', function(req, res) {
 		if (data){
 			if (data == 'OK'){
 				console.log("Device " + req.body.deviceID + " deleted.");
+			}
+			res.send(data);
+		}
+	});
+});
+
+app.post('/api/start-device', function(req, res) {
+	deviceSimulator.startSimulation(req.body.deviceID, req.body.deviceKey, function(err, data){
+		if (err){
+			console.log(err);
+			res.send(err);
+		}
+		if (data){
+			if (data == 'OK'){
+				console.log("Device " + req.body.deviceID + " started.");
+			}
+			res.send(data);
+		}
+	});
+});
+
+app.post('/api/pause-device', function(req, res) {
+	deviceSimulator.pauseSimulation(req.body.deviceID, function(err, data){
+		if (err){
+			console.log(err);
+			res.send(err);
+		}
+		if (data){
+			if (data == 'OK'){
+				console.log("Device " + req.body.deviceID + " paused.");
 			}
 			res.send(data);
 		}
