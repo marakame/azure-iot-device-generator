@@ -32,16 +32,21 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 
 	client = clientFromConnectionString(connectionString);
 
-	client.open(function(err) {
-		if (err) {
-			console.log('Could not connect: ' + err);
-			callback(err);
-		} else {
-			console.log('Client connected');
-			global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
-			callback(null, "OK");
-		}
-	});
+	if (client){
+		global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
+		callback(null, "OK");
+	} else {
+		client.open(function(err) {
+			if (err) {
+				console.log('Could not connect: ' + err);
+				callback(err);
+			} else {
+				console.log('Client connected');
+				global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
+				callback(null, "OK");
+			}
+		});
+	}
 }
 
 function pauseSimulation(simulationDeviceID, callback){
