@@ -12,9 +12,7 @@ $(document).ready(function () {
             var newRow = $("<tr id='" + deviceData.id + "'>");
             var cols = "";
             cols += "<td>" + deviceData.id + "</td>";
-            cols += "<td>20.4984651</td>"
-            cols += "<td>-103.1984156654</td>"
-            cols += "<td>32</td>";
+            cols += "<td id='" + deviceData.id + "-status'>Stopped</td>";
             cols += "<td><p data-placement='top' data-toggle='tooltip' title='Start'><button onclick='startDevice(\"" + deviceData.id + "\", \"" + deviceData.key + "\")' class='btn btn-success btn-xs' data-title='Start' ><span class='glyphicon glyphicon-play'></span></button></p></td>";
             cols += "<td><p data-placement='top' data-toggle='tooltip' title='Pause'><button onclick='pauseDevice(\"" + deviceData.id + "\")' class='btn btn-warning btn-xs' data-title='Pause' ><span class='glyphicon glyphicon-pause'></span></button></p></td>";
             cols += "<td><p data-placement='top' data-toggle='tooltip' title='Delete'><button onclick='deleteDevice(\"" + deviceData.id + "\")' class='btn btn-danger btn-xs' data-title='Delete' ><span class='glyphicon glyphicon-trash'></span></button></p></td>";
@@ -74,6 +72,7 @@ function startDevice(deviceID, deviceKey){
         if(data == 'OK'){
             console.log("Device " + deviceID + " running...");
             console.log(status);
+            $("#" + deviceID + "-status").html("Running");
         }
     })
 
@@ -88,6 +87,7 @@ function pauseDevice(deviceID, deviceKey){
         if(data == 'OK'){
             console.log("Device " + deviceID + " paused...");
             console.log(status);
+            $("#" + deviceID + "-status").html("Paused");
         }
     })
 
