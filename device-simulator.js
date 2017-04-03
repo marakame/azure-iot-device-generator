@@ -15,11 +15,11 @@ function printResultFor(op) {
 		 if (res) console.log(op + ' status: ' + res.constructor.name);
 		};
 	}
-	
+
 
 function simulateTelemetry(telemetryDeviceID){
-	var windSpeed = 10 + (Math.random() * 4);
-	var data = JSON.stringify({ deviceId: telemetryDeviceID, windSpeed: windSpeed });
+	var temperature = getRandomInt(0, 40);
+	var data = JSON.stringify({ deviceId: telemetryDeviceID, temperature: temperature });
 	var message = new Message(data);
 	console.log("Sending message: " + message.getData());
 	client.sendEvent(message, printResultFor('send'));
@@ -28,11 +28,11 @@ function simulateTelemetry(telemetryDeviceID){
 function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 	deviceID = simulationDeviceID;
 	deviceKey = simulationDeviceKey;
-	
+
 	connectionString = 'HostName={AppHostName};DeviceId=' + simulationDeviceID + ';SharedAccessKey=' + simulationDeviceKey;
-	
+
 	client = clientFromConnectionString(connectionString);
-	
+
 	client.open(function(err) {
 		if (err) {
 			console.log('Could not connect: ' + err);
@@ -47,9 +47,13 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 }
 
 function pauseSimulation(simulationDeviceID, callback){
-	
+
 	clearInterval(simulatedDevices[simulationDeviceID].timer);
 	callback(null, "OK");
+}
+
+function getRandomInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 module.exports = {
