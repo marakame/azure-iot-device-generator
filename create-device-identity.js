@@ -5,6 +5,10 @@ const uuidV4 = require('uuid/v4');
 var connectionString = 'HostName={AppHostName};SharedAccessKeyName={YourSharedAccessKeyName};SharedAccessKey={YourSharedAccessKey}';
 
 var registry = iothub.Registry.fromConnectionString(connectionString);
+var deviceMinLat = 20.577952;
+var deviceMinLng = -103.453641;
+var deviceMaxLat = 20.739824;
+var deviceMaxLng = -103.233220;
 
 function createDevice(callback){
     var device = new iothub.Device(null);
@@ -20,6 +24,15 @@ function createDevice(callback){
         printDeviceInfo(err, deviceInfo, res)
         deviceData.id = deviceInfo.deviceId;
         deviceData.key = deviceInfo.authentication.symmetricKey.primaryKey;
+
+        // Create object in array to store data
+        global.simulatedDevices[deviceData.id] = {};
+
+        // Calculate coordinates
+        global.simulatedDevices[deviceData.id].data = {};
+        global.simulatedDevices[deviceData.id].data.deviceId = deviceData.id;
+        global.simulatedDevices[deviceData.id].data.lat = getRandomCoord(deviceMinLat, deviceMaxLat);
+        global.simulatedDevices[deviceData.id].data.lng = getRandomCoord(deviceMinLng, deviceMaxLng);
       }
 
       callback(err, deviceData);
@@ -35,6 +48,8 @@ function deleteDevice(deviceID, callback){
             registry.get(device.deviceId, printDeviceInfo);
             callback(err, data);
         } else {
+            // Delete from global object
+            delete global.simulatedDevices[deviceID];
             callback(err, 'OK');
         }
     });
@@ -54,6 +69,11 @@ function createID(){
     console.log("ID " + deviceID + " created.");
 
     return deviceID;
+}
+
+function getRandomCoord(min, max) {
+    var coord = parseFloat((Math.random() * (max - min) + min).toFixed(4));
+    return coord;
 }
 
 module.exports = {

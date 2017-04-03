@@ -7,7 +7,6 @@ var connectionString;
 var deviceID, deviceKey;
 
 var client;
-var simulatedDevices = {};
 
 function printResultFor(op) {
 		return function printResult(err, res) {
@@ -18,8 +17,8 @@ function printResultFor(op) {
 
 
 function simulateTelemetry(telemetryDeviceID){
-	var temperature = getRandomInt(0, 40);
-	var data = JSON.stringify({ deviceId: telemetryDeviceID, temperature: temperature });
+	global.simulatedDevices[telemetryDeviceID].data.temperature = getRandomInt(0, 40);
+	var data = JSON.stringify(global.simulatedDevices[telemetryDeviceID].data);
 	var message = new Message(data);
 	console.log("Sending message: " + message.getData());
 	client.sendEvent(message, printResultFor('send'));
@@ -39,8 +38,7 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 			callback(err);
 		} else {
 			console.log('Client connected');
-			simulatedDevices[simulationDeviceID] = {};
-			simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
+			global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
 			callback(null, "OK");
 		}
 	});
@@ -48,7 +46,7 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 
 function pauseSimulation(simulationDeviceID, callback){
 
-	clearInterval(simulatedDevices[simulationDeviceID].timer);
+	clearInterval(global.simulatedDevices[simulationDeviceID].timer);
 	callback(null, "OK");
 }
 
