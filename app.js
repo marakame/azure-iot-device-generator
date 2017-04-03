@@ -11,7 +11,7 @@ var app = express();
 // Create a global variable to store all simulated device values
 global.simulatedDevices = {};
 
-var port = process.env.port || 3000
+var port = process.env.port || 3001;
 //setup our app to use handlebars.js for templating
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
