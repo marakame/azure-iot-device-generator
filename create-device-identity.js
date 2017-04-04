@@ -5,10 +5,10 @@ const uuidV4 = require('uuid/v4');
 var connectionString = 'HostName={AppHostName};SharedAccessKeyName={YourSharedAccessKeyName};SharedAccessKey={YourSharedAccessKey}';
 
 var registry = iothub.Registry.fromConnectionString(connectionString);
-var deviceMinLat = 20.577952;
-var deviceMinLng = -103.453641;
-var deviceMaxLat = 20.739824;
-var deviceMaxLng = -103.233220;
+var deviceMinLat = 20.630286;
+var deviceMinLng = -103.405237;
+var deviceMaxLat = 20.706943;
+var deviceMaxLng = -103.297874;
 
 function createDevice(callback){
     var device = new iothub.Device(null);

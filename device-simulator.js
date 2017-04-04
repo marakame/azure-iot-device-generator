@@ -17,7 +17,15 @@ function printResultFor(op) {
 
 
 function simulateTelemetry(telemetryDeviceID){
-	global.simulatedDevices[telemetryDeviceID].data.temperature = getRandomInt(0, 40);
+
+	// Check if temperature measure exists
+	if (typeof global.simulatedDevices[telemetryDeviceID].data.temperature !== 'undefined') {
+		var currentTemperature = global.simulatedDevices[telemetryDeviceID].data.temperature;
+		global.simulatedDevices[telemetryDeviceID].data.temperature = getRandomTemp(currentTemperature, 12);
+	} else {
+		global.simulatedDevices[telemetryDeviceID].data.temperature = getRandomTemp();
+	}
+
 	var data = JSON.stringify(global.simulatedDevices[telemetryDeviceID].data);
 	var message = new Message(data);
 	console.log("Sending message: " + message.getData());
@@ -33,7 +41,7 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 	client = clientFromConnectionString(connectionString);
 
 	if (client){
-		global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
+		global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 10000, simulationDeviceID);
 		callback(null, "OK");
 	} else {
 		client.open(function(err) {
@@ -42,7 +50,7 @@ function startSimulation(simulationDeviceID, simulationDeviceKey, callback){
 				callback(err);
 			} else {
 				console.log('Client connected');
-				global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 1000, simulationDeviceID);
+				global.simulatedDevices[simulationDeviceID].timer = setInterval(simulateTelemetry, 10000, simulationDeviceID);
 				callback(null, "OK");
 			}
 		});
@@ -55,8 +63,27 @@ function pauseSimulation(simulationDeviceID, callback){
 	callback(null, "OK");
 }
 
-function getRandomInt(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandomTemp(currentValue=null, variation=3, absoluteMin=0, absoluteMax=40) {
+	// If current value is not defined get random value, if it is defined, get
+	// a random value no further than the specified variation and within the
+	// specified limits
+	if (currentValue === null) {
+		return Math.floor(Math.random() * (absoluteMax - absoluteMin + 1)) + absoluteMin;
+	} else {
+		var min = currentValue - variation;
+		var max = currentValue + variation;
+
+		if (min < absoluteMin) {
+			min = absoluteMin;
+		}
+
+		if (max > absoluteMax) {
+			max = absoluteMax;
+		}
+
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
 }
 
 module.exports = {
