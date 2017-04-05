@@ -2,12 +2,15 @@ var deviceData;
 
 $(document).ready(function () {
 
+    // On Add devie
     $("#add-device").on("click", function () {
 
+        // Make call to create device and get device data back
         $.getJSON("api/create-device", function(data, status){
             deviceData = data;
         })
 
+        // When done add row to table with the retrieved data
         .done(function() {
             var newRow = $("<tr id='" + deviceData.id + "'>");
             var cols = "";
@@ -21,13 +24,14 @@ $(document).ready(function () {
             $("#device-table").append(newRow);
         })
 
+        // On fail alert the user
         .fail(function() {
             alert( status );
         });
 
     });
 
-
+    // Log buttons actions for testing
     $("#start").on("click", function () {
         console.log("Start!");
     });
@@ -41,18 +45,12 @@ $(document).ready(function () {
 
     });
 
-    $("#device-table").on("click", "#delete", function (event) {
-        console.log("Delete function!");
-        $(this).closest("tr").remove();
-        counter -= 1
-    });
-
-
 });
 
 function deleteDevice(deviceID){
 
     $.post("api/delete-device", {deviceID: deviceID}, function(data, status){
+        // If response is OK log result and remove from table
         if(data == 'OK'){
             $("#" + deviceID).remove();
             console.log(data);
@@ -67,7 +65,7 @@ function deleteDevice(deviceID){
 }
 
 function startDevice(deviceID, deviceKey){
-
+    // If reponse is OK log result and update table
     $.post("api/start-device", {deviceID: deviceID, deviceKey: deviceKey}, function(data, status){
         if(data == 'OK'){
             console.log("Device " + deviceID + " running...");
@@ -82,7 +80,7 @@ function startDevice(deviceID, deviceKey){
 }
 
 function pauseDevice(deviceID, deviceKey){
-
+    // If reponse is OK log result and update table
     $.post("api/pause-device", {deviceID: deviceID}, function(data, status){
         if(data == 'OK'){
             console.log("Device " + deviceID + " paused...");
