@@ -23,7 +23,7 @@ and run with:
 ```
 node app.js
 ```
-The app will be available at http://localhost:3000, devices can be created and deleted from the web page and the telemetry simulation for each device can be started and paused from there also.
+The app will be available at http://localhost:3001, devices can be created and deleted from the web page and the telemetry simulation for each device can be started and paused from there also.
 
 ## Deployment in Azure
 
